@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+@theme {
+  --color-cherry-blossom: #edafb8;
+  --color-cream: #f7e1d7;
+  --color-latte: #dedbd2;
+  --color-matcha: "#b0c4b1";
+  --color-bergamot: "#4a5759";
+}
