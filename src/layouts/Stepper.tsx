@@ -7,6 +7,23 @@ const Stepper = () => {
   type steps = "upload_file" | "choose_emotion" | "summary";
   const [activeStep, setActiveStep] = useState<steps>("upload_file");
 
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [storyDescription, setStoryDescription] = useState<string>("");
+  const [selectedEmotion, setSelectedEmotion] = useState<string>("");
+  const [isLoadingEmotion, setLoadingEmotion] = useState<boolean>(false);
+
+  const handleFileChange = (file: File) => {
+    setUploadedFile(file);
+  };
+
+  const handleDescriptionChange = (description: string) => {
+    setStoryDescription(description);
+  };
+
+  const handleEmotionChange = (emotion: string) => {
+    setSelectedEmotion(emotion);
+  };
+
   const nextStep = (currentStep: steps) => {
     if (currentStep == "upload_file") {
       return "choose_emotion";
@@ -25,11 +42,29 @@ const Stepper = () => {
 
   const StepperBody = () => {
     if (activeStep === "upload_file") {
-      return <UploadStep />;
+      return (
+        <UploadStep
+          props={{
+            fileEmitter: handleFileChange,
+            descriptionEmitter: handleDescriptionChange,
+            file: uploadedFile,
+            description: storyDescription,
+            activeStep: activeStep,
+          }}
+        />
+      );
     }
 
     if (activeStep === "choose_emotion") {
-      return <EmotionStep />;
+      return (
+        <EmotionStep
+          props={{
+            isLoading: isLoadingEmotion,
+            emotion: selectedEmotion,
+            emotionStepperEmitEmotion: handleEmotionChange,
+          }}
+        />
+      );
     }
 
     return <SummaryStep />;
@@ -58,9 +93,9 @@ const Stepper = () => {
           >
             <path
               stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="m7 9 4-4-4-4M1 9l4-4-4-4"
             />
           </svg>
@@ -85,9 +120,9 @@ const Stepper = () => {
           >
             <path
               stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="m7 9 4-4-4-4M1 9l4-4-4-4"
             />
           </svg>
