@@ -4,6 +4,8 @@ import SummaryStep from "../pages/SummaryStep";
 import EmotionStep from "../pages/EmotionStep";
 
 const Stepper = () => {
+  const mockSummaryText =
+    "The data on social media paints a concerning picture. Relentless increases in daily usage steal time from real-world connections and personal reflection, potentially fueling loneliness. Engagement metrics highlight a troubling reliance on online validation, fostering insecurity through constant comparison with curated online personas. Rising FOMO statistics reveal a pervasive anxiety of missing out, driving compulsive platform checking. Furthermore, data on cyberbullying underscores the emotional toll of online negativity. These figures aren't just numbers; they signal a worrying trend of digital entanglement impacting our emotional well-being. We must address this growing concern to foster a healthier, more balanced relationship with social media before its allure overshadows genuine connection and peace of mind.";
   type steps = "upload_file" | "choose_emotion" | "summary";
   const [activeStep, setActiveStep] = useState<steps>("upload_file");
 
@@ -67,7 +69,7 @@ const Stepper = () => {
       );
     }
 
-    return <SummaryStep />;
+    return <SummaryStep props={{ summaryText: mockSummaryText }} />;
   };
 
   return (
