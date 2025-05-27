@@ -1,18 +1,14 @@
 import { useState } from "react";
-import UploadStep from "../pages/UploadStep";
-import SummaryStep from "../pages/SummaryStep";
-import EmotionStep from "../pages/EmotionStep";
 
+import FirstPage from "../pages/FirstPage";
+import SecondPage from "../pages/SecondPage";
+
+type steps = "first" | "second";
 const Stepper = () => {
-  const mockSummaryText =
-    "The data on social media paints a concerning picture. Relentless increases in daily usage steal time from real-world connections and personal reflection, potentially fueling loneliness. Engagement metrics highlight a troubling reliance on online validation, fostering insecurity through constant comparison with curated online personas. Rising FOMO statistics reveal a pervasive anxiety of missing out, driving compulsive platform checking. Furthermore, data on cyberbullying underscores the emotional toll of online negativity. These figures aren't just numbers; they signal a worrying trend of digital entanglement impacting our emotional well-being. We must address this growing concern to foster a healthier, more balanced relationship with social media before its allure overshadows genuine connection and peace of mind.";
-  type steps = "first" | "second";
   const [activeStep, setActiveStep] = useState<steps>("first");
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [storyDescription, setStoryDescription] = useState<string>("");
-  const [selectedEmotion, setSelectedEmotion] = useState<string>("");
-  const [isLoadingEmotion, setLoadingEmotion] = useState<boolean>(false);
 
   const handleFileChange = (file: File) => {
     setUploadedFile(file);
@@ -22,22 +18,18 @@ const Stepper = () => {
     setStoryDescription(description);
   };
 
-  const handleEmotionChange = (emotion: string) => {
-    setSelectedEmotion(emotion);
-  };
-
-  const nextStep = () => {
+  const nextStep = (): steps => {
     return "second";
   };
 
-  const previousStep = () => {
+  const previousStep = (): steps => {
     return "first";
   };
 
   const StepperBody = () => {
     if (activeStep === "first") {
       return (
-        <UploadStep
+        <FirstPage
           props={{
             fileEmitter: handleFileChange,
             descriptionEmitter: handleDescriptionChange,
@@ -49,7 +41,7 @@ const Stepper = () => {
       );
     }
 
-    return <SummaryStep props={{ summaryText: mockSummaryText }} />;
+    return <SecondPage />;
   };
 
   return (

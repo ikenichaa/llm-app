@@ -1,4 +1,5 @@
-import Loading from "../components/Loading";
+import Loading from "./Loading";
+import { emotions as emotion_list } from "../constatnt/emotions";
 
 interface Prop {
   emotionStepperEmitEmotion: (emotion: string) => void;
@@ -15,29 +16,6 @@ const EmotionStep = ({
 }: {
   props: Prop;
 }) => {
-  const emotionList = [
-    {
-      id: "1",
-      name: "Happy",
-    },
-    {
-      id: "2",
-      name: "Sad",
-    },
-    {
-      id: "3",
-      name: "Fear",
-    },
-    {
-      id: "4",
-      name: "Joy",
-    },
-    {
-      id: "5",
-      name: "Nostalgic",
-    },
-  ];
-
   const EmotionListSelection = () => {
     const handleEmotionChange = (name: string) => {
       props.emotionStepperEmitEmotion(name);
@@ -46,7 +24,7 @@ const EmotionStep = ({
     return (
       <>
         <ul className="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-          {emotionList.map((emotion) => (
+          {emotion_list.map((emotion) => (
             <li
               key={emotion.id}
               className="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600"

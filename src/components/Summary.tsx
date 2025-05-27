@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
+import { mockVisualizedCode } from "../constatnt/mock";
 import { Card } from "flowbite-react";
-import Toggle from "../components/Toggle";
+import Toggle from "./Toggle";
 
 import hljs from "highlight.js";
 import "highlight.js/styles/monokai.css";
@@ -23,51 +24,6 @@ const SummaryStep = ({
     setToggleCode(status);
   };
 
-  const visualization = [
-    {
-      key: "1",
-      image: "/src/assets/mock-graph-1.png",
-      code: `import matplotlib.pyplot as plt
-
-      # Sample data
-      x = [1, 2, 3, 4, 5]
-      y = [2, 4, 1, 5, 3]
-
-      # Create a simple line plot
-      plt.plot(x, y)
-
-      # Add labels and title
-      plt.xlabel("X-axis")
-      plt.ylabel("Y-axis")
-      plt.title("Simple Line Plot")
-
-      # Display the plot
-      plt.show()
-    `,
-    },
-    {
-      key: "2",
-      image: "/src/assets/mock-graph-2.png",
-      code: `import matplotlib.pyplot as plt
-
-      # Sample data
-      x = [1, 2, 3, 4, 5]
-      y = [2, 4, 1, 5, 3]
-
-      # Create a simple line plot
-      plt.plot(x, y)
-
-      # Add labels and title
-      plt.xlabel("X-axis")
-      plt.ylabel("Y-axis")
-      plt.title("Simple Line Plot")
-
-      # Display the plot
-      plt.show()
-    `,
-    },
-  ];
-
   const PythonCodeBlock: React.FC<PythonCodeBlockProps> = ({ code }) => {
     const codeRef = useRef<HTMLElement>(null); // Ref to the <code> element
 
@@ -87,7 +43,7 @@ const SummaryStep = ({
   };
 
   const VisualizationObject = () => {
-    const cardObjects = visualization.map((viz) => (
+    const cardObjects = mockVisualizedCode.map((viz) => (
       <Card key={viz.key} className="mb-4">
         <img
           className="h-auto max-w-full rounded-lg"
@@ -124,7 +80,7 @@ const SummaryStep = ({
           {!toggleCode && <VisualizationObject />}
 
           {toggleCode &&
-            visualization.map((item) => (
+            mockVisualizedCode.map((item) => (
               <PythonCodeBlock key={item.key} code={item.code} />
             ))}
         </div>
