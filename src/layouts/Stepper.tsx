@@ -77,7 +77,7 @@ const Stepper = () => {
           2. User Agency & Summary
         </button>
       </ol>
-      <div className="grid my-16 mx-50 gap-y-10">
+      <div className="grid my-10 mx-50 gap-y-10">
         <StepperBody />
       </div>
 
