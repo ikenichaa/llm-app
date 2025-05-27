@@ -82,7 +82,7 @@ const Stepper = () => {
               : "flex items-center text-gray-600"
           }
         >
-          <span className="flex items-center justify-center w-5 h-5 me-2 text-xs border border-blue-600 rounded-full shrink-0 dark:border-blue-500">
+          <span className="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-500 rounded-full shrink-0 dark:border-blue-500">
             1
           </span>
           Upload file and Description
