@@ -4,6 +4,7 @@ import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 import FirstPage from "../pages/FirstPage";
 import SecondPage from "../pages/SecondPage";
+import { uploadFile } from "../api/upload";
 
 type steps = "first" | "second";
 const Stepper = () => {
@@ -20,7 +21,13 @@ const Stepper = () => {
     setStoryDescription(description);
   };
 
-  const nextStep = (): steps => {
+  const nextStep = async (): Promise<steps> => {
+    await uploadFile(
+      uploadedFile as File,
+      storyDescription,
+      "test-9" // Replace with actual session ID if needed)
+    );
+
     return "second";
   };
 
