@@ -9,7 +9,10 @@ import clp_3 from "../assets/pallete/clp_3.png";
 import clp_4 from "../assets/pallete/clp_4.png";
 
 interface Prop {
-  isLoading: boolean;
+  recommendedEmotion?: string;
+  recommendedEmotionReason?: string;
+  inappropriateEmotion?: string;
+  inappropriateEmotionReason?: string;
 }
 
 const word_count = [200, 300, 500];
@@ -23,12 +26,17 @@ const colorOptions = [
 
 const EmotionStep = ({
   props = {
-    isLoading: false,
+    recommendedEmotion: "",
+    recommendedEmotionReason: "",
+    inappropriateEmotion: "",
+    inappropriateEmotionReason: "",
   },
 }: {
   props: Prop;
 }) => {
-  const [selectedEmotion, setSelectedEmotion] = useState("joy");
+  const [selectedEmotion, setSelectedEmotion] = useState(
+    props.recommendedEmotion || "joy"
+  );
   const [emotionIntensity, setEmotionIntensity] = useState(1);
   const [selectedWordCount, setWordCount] = useState(200);
   const [purpose, setPurpose] = useState("Inform");
@@ -51,13 +59,6 @@ const EmotionStep = ({
   };
 
   const EmotionBody = () => {
-    if (props.isLoading) {
-      return (
-        <div className="flex gap-x-4">
-          <Loading /> Analyzing the text...
-        </div>
-      );
-    }
     return (
       <>
         <h2 className="text-xl font-semibold text-gray-700 mb-3 border-b pb-2 border-gray-200">
@@ -66,9 +67,19 @@ const EmotionStep = ({
         <div className="flex flex-col gap-y-6">
           {/* Emotion Selection */}
           <div>
-            <label className="block text-base font-medium text-gray-700 mb-2">
-              The Story Emotion:
-            </label>
+            <div className="mb-2">
+              <label className="block text-base font-medium text-gray-700 mb-2">
+                The Story Emotion:
+              </label>
+              {props.recommendedEmotion && (
+                <span className="text-sm text-gray-500">
+                  The recommended emotion is{" "}
+                  <span className="font-bold">{props.recommendedEmotion}</span>
+                  {" as "}
+                  {props.recommendedEmotionReason?.toLowerCase()}
+                </span>
+              )}
+            </div>
             <div className="flex flex-wrap gap-2">
               {emotion_list.map((emotion) => (
                 <button

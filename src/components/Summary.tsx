@@ -3,7 +3,8 @@ import { FaArrowLeft } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 
 interface summaryProp {
-  summaryText: string;
+  summaryText?: string;
+  visualizationImages?: string[];
 }
 
 // Array of image URLs for the visualization gallery
@@ -16,7 +17,7 @@ const visualizationImages = [
 ];
 
 const SummaryStep = ({
-  props = { summaryText: "" },
+  props = { summaryText: "", visualizationImages: [] },
 }: {
   props: summaryProp;
 }) => {
@@ -59,46 +60,49 @@ const SummaryStep = ({
           <h3 className="text-lg font-semibold text-gray-800">Visualization</h3>
         </div>
         <div className="relative w-full">
-          <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
-            {/* Dynamically render images based on current index */}
-            {visualizationImages.map((src, index) => (
-              <div
-                key={index}
-                // Only display the current image item
-                className={`duration-700 ease-in-out absolute top-0 left-0 w-full h-full flex justify-center items-center transform ${
-                  index === currentImageIndex
-                    ? "opacity-100 z-10"
-                    : "opacity-0 z-0"
-                }`}
-                style={{
-                  transition: "opacity 0.7s ease-in-out", // Simple fade transition
-                }}
-              >
-                <img
-                  src={src}
-                  className="block max-w-full h-auto object-contain"
-                  alt={`Visualization ${index + 1}`}
-                />
+          {(props.visualizationImages ?? []).length > 0 && (
+            <>
+              <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
+                {/* Dynamically render images based on current index */}
+                {visualizationImages.map((src, index) => (
+                  <div
+                    key={index}
+                    // Only display the current image item
+                    className={`duration-700 ease-in-out absolute top-0 left-0 w-full h-full flex justify-center items-center transform ${
+                      index === currentImageIndex
+                        ? "opacity-100 z-10"
+                        : "opacity-0 z-0"
+                    }`}
+                    style={{
+                      transition: "opacity 0.7s ease-in-out", // Simple fade transition
+                    }}
+                  >
+                    <img
+                      src={src}
+                      className="block max-w-full h-auto object-contain"
+                      alt={`Visualization ${index + 1}`}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          {/* Navigation buttons */}
-          <div className="flex justify-center items-center pt-4">
-            <button
-              type="button"
-              onClick={prevImage}
-              className="flex justify-center items-center me-4 h-full cursor-pointer group focus:outline-none"
-            >
-              <FaArrowLeft />
-            </button>
-            <button
-              type="button"
-              onClick={nextImage}
-              className="flex justify-center items-center h-full cursor-pointer group focus:outline-none"
-            >
-              <FaArrowRight />
-            </button>
-          </div>
+              <div className="flex justify-center items-center pt-4">
+                <button
+                  type="button"
+                  onClick={prevImage}
+                  className="flex justify-center items-center me-4 h-full cursor-pointer group focus:outline-none"
+                >
+                  <FaArrowLeft />
+                </button>
+                <button
+                  type="button"
+                  onClick={nextImage}
+                  className="flex justify-center items-center h-full cursor-pointer group focus:outline-none"
+                >
+                  <FaArrowRight />
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
