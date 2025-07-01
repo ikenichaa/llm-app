@@ -1,88 +1,104 @@
-import { useState, useRef, useEffect } from "react";
-import { mockVisualizedCode } from "../constatnt/mock";
-import { Card } from "flowbite-react";
-import Toggle from "./Toggle";
-
-import hljs from "highlight.js";
-import "highlight.js/styles/monokai.css";
-
-interface PythonCodeBlockProps {
-  code: string;
-}
+import { useState } from "react";
+import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 
 interface summaryProp {
   summaryText: string;
 }
+
+// Array of image URLs for the visualization gallery
+const visualizationImages = [
+  "https://placehold.co/500x300/a0c4ff/ffffff?text=Visualization+Image+1",
+  "https://placehold.co/500x300/ffadad/ffffff?text=Visualization+Image+2",
+  "https://placehold.co/500x300/ffd6a5/ffffff?text=Visualization+Image+3",
+  "https://placehold.co/500x300/caffbf/ffffff?text=Visualization+Image+4",
+  "https://placehold.co/500x300/bae1ff/ffffff?text=Visualization+Image+5",
+];
 
 const SummaryStep = ({
   props = { summaryText: "" },
 }: {
   props: summaryProp;
 }) => {
-  const [toggleCode, setToggleCode] = useState<boolean>(false);
-  const handleToggleEmitter = (status: boolean) => {
-    setToggleCode(status);
-  };
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const PythonCodeBlock: React.FC<PythonCodeBlockProps> = ({ code }) => {
-    const codeRef = useRef<HTMLElement>(null); // Ref to the <code> element
-
-    useEffect(() => {
-      if (codeRef.current) {
-        hljs.highlightElement(codeRef.current);
-      }
-    }, [code]);
-
-    return (
-      <div className="bg-black text-white p-2 rounded-md block whitespace-pre">
-        <code ref={codeRef} className="language-python">
-          {code}
-        </code>
-      </div>
+  // Function to navigate to the next image
+  const nextImage = () => {
+    setCurrentImageIndex(
+      (prevIndex) => (prevIndex + 1) % visualizationImages.length
     );
   };
 
-  const VisualizationObject = () => {
-    const cardObjects = mockVisualizedCode.map((viz) => (
-      <Card key={viz.key} className="mb-4">
-        <img
-          className="h-auto max-w-full rounded-lg"
-          src={viz.image}
-          alt={`Visualization ${viz.key}`}
-        />
-      </Card>
-    ));
-
-    return cardObjects;
+  // Function to navigate to the previous image
+  const prevImage = () => {
+    setCurrentImageIndex(
+      (prevIndex) =>
+        (prevIndex - 1 + visualizationImages.length) %
+        visualizationImages.length
+    );
   };
+
   return (
     <>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
-          <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
-            Summary
-          </h3>
-          <p className="text-justify">{props.summaryText}</p>
-        </div>
-        <div className="grid gap-y-6 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
-          <div className="flex justify-between">
-            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
-              Visualisation
-            </h3>
-            <Toggle
-              props={{
-                text: "Show the code",
-                toggleStatus: toggleCode,
-                emitChecked: handleToggleEmitter,
-              }}
-            />
-          </div>
-          {!toggleCode && <VisualizationObject />}
+      <h2 className="text-xl font-semibold text-gray-700 mb-3 border-b pb-2 border-gray-200">
+        Generated Output
+      </h2>
 
-          {toggleCode &&
-            mockVisualizedCode.map((item) => (
-              <PythonCodeBlock key={item.key} code={item.code} />
+      {/* Summary */}
+      <div className="bg-gray-50 p-6 rounded-md border border-gray-200 min-h-[150px]">
+        <h3 className="text-lg font-semibold text-gray-800 mb-3">Summary</h3>
+        <p className="text-gray-700 leading-relaxed text-justify">
+          {" "}
+          {props.summaryText}
+        </p>
+      </div>
+
+      {/* Visualization Gallery */}
+      <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-lg font-semibold text-gray-800">Visualization</h3>
+        </div>
+        <div className="relative w-full">
+          <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
+            {/* Dynamically render images based on current index */}
+            {visualizationImages.map((src, index) => (
+              <div
+                key={index}
+                // Only display the current image item
+                className={`duration-700 ease-in-out absolute top-0 left-0 w-full h-full flex justify-center items-center transform ${
+                  index === currentImageIndex
+                    ? "opacity-100 z-10"
+                    : "opacity-0 z-0"
+                }`}
+                style={{
+                  transition: "opacity 0.7s ease-in-out", // Simple fade transition
+                }}
+              >
+                <img
+                  src={src}
+                  className="block max-w-full h-auto object-contain"
+                  alt={`Visualization ${index + 1}`}
+                />
+              </div>
             ))}
+          </div>
+          {/* Navigation buttons */}
+          <div className="flex justify-center items-center pt-4">
+            <button
+              type="button"
+              onClick={prevImage}
+              className="flex justify-center items-center me-4 h-full cursor-pointer group focus:outline-none"
+            >
+              <FaArrowLeft />
+            </button>
+            <button
+              type="button"
+              onClick={nextImage}
+              className="flex justify-center items-center h-full cursor-pointer group focus:outline-none"
+            >
+              <FaArrowRight />
+            </button>
+          </div>
         </div>
       </div>
     </>

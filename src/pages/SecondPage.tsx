@@ -5,24 +5,36 @@ import { mockSummaryText } from "../constatnt/mock";
 import UserAgency from "../components/UserAgency";
 import Summary from "../components/Summary";
 
-const SecondPage = () => {
+interface SecondPageProps {
+  sessionId: string;
+}
+
+const SecondPage = ({
+  props = {
+    sessionId: "",
+  },
+}: {
+  props: SecondPageProps;
+}) => {
   const [isLoadingEmotion, setLoadingEmotion] = useState<boolean>(false);
-  const [selectedEmotion, setSelectedEmotion] = useState<string>("");
-  const handleEmotionChange = (emotion: string) => {
-    setSelectedEmotion(emotion);
-  };
 
   return (
     <>
-      <UserAgency
-        props={{
-          isLoading: isLoadingEmotion,
-          emotion: selectedEmotion,
-          emotionStepperEmitEmotion: handleEmotionChange,
-        }}
-      />
-      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"></hr>
-      <Summary props={{ summaryText: mockSummaryText }} />
+      <div className="w-full flex flex-col lg:flex-row gap-6">
+        {/* <!-- Left Column: Input Controls --> */}
+        <section className="self-start lg:w-2/5 p-6 bg-white rounded-lg shadow-xl flex flex-col gap-y-5">
+          <UserAgency
+            props={{
+              isLoading: isLoadingEmotion,
+            }}
+          />
+        </section>
+
+        {/* <!-- Right Column: Summary and Visualization --> */}
+        <section className="p-6 lg:w-3/5 bg-white rounded-lg shadow-xl flex flex-col gap-y-5 flex-grow">
+          <Summary props={{ summaryText: mockSummaryText }} />
+        </section>
+      </div>
     </>
   );
 };

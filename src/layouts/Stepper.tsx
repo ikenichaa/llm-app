@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
@@ -12,6 +13,7 @@ const Stepper = () => {
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [storyDescription, setStoryDescription] = useState<string>("");
+  const sessionId = uuid;
 
   const handleFileChange = (file: File) => {
     setUploadedFile(file);
@@ -21,14 +23,31 @@ const Stepper = () => {
     setStoryDescription(description);
   };
 
-  const nextStep = async (): Promise<steps> => {
-    await uploadFile(
-      uploadedFile as File,
-      storyDescription,
-      "test-9" // Replace with actual session ID if needed)
-    );
+  const nextStep = () => {
+    try {
+      if (!uploadedFile) {
+        throw new Error("Please upload a file before proceeding.");
+      }
+      if (!storyDescription) {
+        throw new Error("Please provide a description before proceeding.");
+      }
 
-    return "second";
+      uploadFile(
+        uploadedFile as File,
+        storyDescription,
+        "test-9" // Replace with actual session ID if needed)
+      );
+    } catch (error) {
+      console.error("Error during file upload:", error);
+
+      alert(
+        error instanceof Error ? error.message : "An unexpected error occurred."
+      );
+
+      return;
+    }
+
+    setActiveStep("second");
   };
 
   const previousStep = (): steps => {
@@ -82,13 +101,13 @@ const Stepper = () => {
                 ? "text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
                 : "text-gray hover:text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
             }
-            onClick={() => setActiveStep(nextStep())}
+            onClick={() => nextStep()}
           >
             2. User Agency & Summary
           </button>
         </ol>
         <main className="flex-grow">
-          <div className="grid my-10 mx-50 gap-y-10">
+          <div className="grid my-10 mx-20 gap-y-10">
             <StepperBody />
           </div>
         </main>
@@ -111,7 +130,7 @@ const Stepper = () => {
 
           {activeStep == "first" && (
             <button
-              onClick={() => setActiveStep(nextStep())}
+              onClick={() => nextStep()}
               type="button"
               className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
