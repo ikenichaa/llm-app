@@ -4,6 +4,7 @@ import { FaArrowRight } from "react-icons/fa";
 
 interface summaryProp {
   summaryText?: string;
+  isGeneratingNarrative: boolean;
   visualizationImages?: string[];
 }
 
@@ -17,7 +18,11 @@ const visualizationImages = [
 ];
 
 const SummaryStep = ({
-  props = { summaryText: "", visualizationImages: [] },
+  props = {
+    summaryText: "",
+    isGeneratingNarrative: false,
+    visualizationImages: [],
+  },
 }: {
   props: summaryProp;
 }) => {
@@ -48,6 +53,12 @@ const SummaryStep = ({
       {/* Summary */}
       <div className="bg-gray-50 p-6 rounded-md border border-gray-200 min-h-[150px]">
         <h3 className="text-lg font-semibold text-gray-800 mb-3">Summary</h3>
+        {props.isGeneratingNarrative && props.summaryText == "" && (
+          <div className="flex justify-center items-center space-x-2">
+            <span>Loading</span>
+            <div className="w-8 h-8 border-4 border-blue-400 border-t-blue-600 rounded-full animate-spin"></div>
+          </div>
+        )}
         <p className="text-gray-700 leading-relaxed text-justify">
           {" "}
           {props.summaryText}
@@ -56,8 +67,15 @@ const SummaryStep = ({
 
       {/* Visualization Gallery */}
       <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
-        <div className="flex justify-between items-center mb-3">
+        <div className="flex flex-col">
           <h3 className="text-lg font-semibold text-gray-800">Visualization</h3>
+          {(props.isGeneratingNarrative ||
+            (props.visualizationImages?.length ?? 0) == 0) && (
+            <div className="flex justify-center items-center space-x-2">
+              <span>Loading</span>
+              <div className="w-8 h-8 border-4 border-blue-400 border-t-blue-600 rounded-full animate-spin"></div>
+            </div>
+          )}
         </div>
         <div className="relative w-full">
           {(props.visualizationImages ?? []).length > 0 && (

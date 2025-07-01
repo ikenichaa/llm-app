@@ -2,6 +2,7 @@ import { useState } from "react";
 import Loading from "./Loading";
 
 import { emotions as emotion_list } from "../constatnt/emotions";
+import type { GenerateNarrativePayload as generatePayload } from "../api/generateNarrative";
 
 import clp_1 from "../assets/pallete/clp_1.png";
 import clp_2 from "../assets/pallete/clp_2.png";
@@ -13,6 +14,7 @@ interface Prop {
   recommendedEmotionReason?: string;
   inappropriateEmotion?: string;
   inappropriateEmotionReason?: string;
+  emitClickGenerate?: (arg0: generatePayload) => void;
 }
 
 const word_count = [200, 300, 500];
@@ -30,10 +32,12 @@ const EmotionStep = ({
     recommendedEmotionReason: "",
     inappropriateEmotion: "",
     inappropriateEmotionReason: "",
+    emitClickGenerate: (_: generatePayload) => {},
   },
 }: {
   props: Prop;
 }) => {
+  console.log("[User Agency] App component rendering...");
   const [selectedEmotion, setSelectedEmotion] = useState(
     props.recommendedEmotion || "joy"
   );
@@ -44,12 +48,16 @@ const EmotionStep = ({
 
   // Example handler for the submit button
   const handleSubmit = async () => {
-    // In a real application, you would gather all form data here
-    // and make an API call (e.g., using the uploadFile function if applicable,
-    // or a new function to generate summary/visualization based on these inputs).
+    if (props.emitClickGenerate) {
+      props.emitClickGenerate({
+        emotion: selectedEmotion,
+        intensity_level: emotionIntensity,
+        word_count: selectedWordCount,
+        purpose: purpose,
+      });
+    }
 
-    // Simulate API call for demonstration
-    console.log("Submitting data:", {
+    console.log("Emitting Generated Payload: ", {
       selectedEmotion,
       emotionIntensity,
       selectedWordCount,
@@ -76,7 +84,7 @@ const EmotionStep = ({
                   The recommended emotion is{" "}
                   <span className="font-bold">{props.recommendedEmotion}</span>
                   {" as "}
-                  {props.recommendedEmotionReason?.toLowerCase()}
+                  {props.recommendedEmotionReason}
                 </span>
               )}
             </div>
@@ -86,17 +94,16 @@ const EmotionStep = ({
                   key={emotion.id}
                   type="button"
                   onClick={() => setSelectedEmotion(emotion.name.toLowerCase())}
-                  // Dynamically apply classes based on selection
                   className={`
                     px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200
                     ${
                       selectedEmotion === emotion.name.toLowerCase()
-                        ? "bg-blue-600 text-white shadow-md" // Selected style
-                        : "bg-gray-200 text-gray-800 hover:bg-blue-100 hover:text-blue-700" // Unselected style
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "bg-gray-200 text-gray-800 hover:bg-blue-100 hover:text-blue-700"
                     }
                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:scale-105
                   `}
-                  aria-pressed={selectedEmotion === emotion.name.toLowerCase()} // For accessibility
+                  aria-pressed={selectedEmotion === emotion.name.toLowerCase()}
                 >
                   {emotion.name}
                 </button>

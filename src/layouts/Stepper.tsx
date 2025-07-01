@@ -17,6 +17,7 @@ const Stepper = () => {
   const [inappropriateEmotion, setInappropriateEmotion] = useState<string>("");
   const [inappropriateEmotionReason, setInappropriateEmotionReason] =
     useState<string>("");
+  const [affectiveNarrative, setAffectiveNarrative] = useState<string>("");
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [storyDescription, setStoryDescription] = useState<string>("");
@@ -52,6 +53,11 @@ const Stepper = () => {
           );
           setInappropriateEmotionReason(data["data"]["result"]["reason"]);
         }
+      }
+
+      if (data["data"]["title"] === "affective_narrative") {
+        console.log("Received affective narrative data:", data);
+        setAffectiveNarrative(data["data"]["result"]);
       }
     };
 
@@ -121,7 +127,9 @@ const Stepper = () => {
           recommendedEmotionReason: recommendedEmotionReason || "",
           inappropriateEmotion: inappropriateEmotion || "",
           inappropriateEmotionReason: inappropriateEmotionReason || "",
-          summaryText: "",
+          summaryText: affectiveNarrative || "",
+          visualizationImages: [],
+          sessionId: sessionId,
         }}
       />
     );
