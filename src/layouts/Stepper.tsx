@@ -1,74 +1,66 @@
 import { useState, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
 
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 import FirstPage from "../pages/FirstPage";
 import SecondPage from "../pages/SecondPage";
 import { uploadFile } from "../api/upload";
+import { useWebSocket } from "../contexts/WebSocketContext";
 
 type steps = "first" | "second";
 const Stepper = () => {
   const [activeStep, setActiveStep] = useState<steps>("first");
-  const [recommendedEmotion, setRecommendedEmotion] = useState<string>("");
-  const [recommendedEmotionReason, setRecommendedEmotionReason] =
-    useState<string>("");
-
-  const [inappropriateEmotion, setInappropriateEmotion] = useState<string>("");
-  const [inappropriateEmotionReason, setInappropriateEmotionReason] =
-    useState<string>("");
-  const [affectiveNarrative, setAffectiveNarrative] = useState<string>("");
-
+  const { sessionId } = useWebSocket();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [storyDescription, setStoryDescription] = useState<string>("");
-  const [ws, setWs] = useState<null | WebSocket>(null);
-  const [sessionId] = useState(() => uuidv4());
+  // const [ws, setWs] = useState<null | WebSocket>(null);
+  // const [sessionId] = useState(() => uuidv4());
 
-  useEffect(() => {
-    console.log("Creating WebSocket connection...");
-    console.log("Session ID:", sessionId);
-    const websocket = new WebSocket(
-      "ws://127.0.0.1:8000/websocket/ws/" + sessionId
-    );
-    setWs(websocket);
+  // useEffect(() => {
+  //   console.log("Creating WebSocket connection...");
+  //   console.log("Session ID:", sessionId);
+  //   const websocket = new WebSocket(
+  //     "ws://127.0.0.1:8000/websocket/ws/" + sessionId
+  //   );
+  //   setWs(websocket);
 
-    websocket.onopen = () =>
-      console.log(
-        `Connected to WebSocket server with session ID: ${sessionId}`
-      );
-    websocket.onmessage = (event) => {
-      console.log("Received message:", event);
-      console.log("Message from server:", event.data);
-      const data = JSON.parse(event.data);
-      console.log("Parsed data:", data);
-      if (data["data"]["title"] === "recommended_emotion") {
-        setRecommendedEmotion(data["data"]["result"]["emotion"]);
-        setRecommendedEmotionReason(data["data"]["result"]["reason"]);
-      }
+  //   websocket.onopen = () =>
+  //     console.log(
+  //       `Connected to WebSocket server with session ID: ${sessionId}`
+  //     );
+  //   websocket.onmessage = (event) => {
+  //     console.log("Received message:", event);
+  //     console.log("Message from server:", event.data);
+  //     const data = JSON.parse(event.data);
+  //     console.log("Parsed data:", data);
+  //     if (data["data"]["title"] === "recommended_emotion") {
+  //       setRecommendedEmotion(data["data"]["result"]["emotion"]);
+  //       setRecommendedEmotionReason(data["data"]["result"]["reason"]);
+  //     }
 
-      if (data["data"]["title"] === "inappropriate_emotion") {
-        if (data["data"]["result"]["is_there_inappropriate_emotion"]) {
-          setInappropriateEmotion(
-            data["data"]["result"]["inappropriate_emotion"]
-          );
-          setInappropriateEmotionReason(data["data"]["result"]["reason"]);
-        }
-      }
+  //     if (data["data"]["title"] === "inappropriate_emotion") {
+  //       if (data["data"]["result"]["is_there_inappropriate_emotion"]) {
+  //         setInappropriateEmotion(
+  //           data["data"]["result"]["inappropriate_emotion"]
+  //         );
+  //         setInappropriateEmotionReason(data["data"]["result"]["reason"]);
+  //       }
+  //     }
 
-      if (data["data"]["title"] === "affective_narrative") {
-        console.log("Received affective narrative data:", data);
-        setAffectiveNarrative(data["data"]["result"]);
-      }
-    };
+  //     if (data["data"]["title"] === "affective_narrative") {
+  //       console.log("Received affective narrative data:", data);
+  //       setAffectiveNarrative(data["data"]["result"]);
+  //     }
+  //   };
 
-    websocket.onclose = () =>
-      console.log(
-        `Disconnected from WebSocket server with session ID: ${sessionId}`
-      );
+  //   websocket.onclose = () =>
+  //     console.log(
+  //       `Disconnected from WebSocket server with session ID: ${sessionId}`
+  //     );
 
-    // Cleanup on unmount
-    return () => websocket.close();
-  }, []);
+  //   // Cleanup on unmount
+  //   return () => websocket.close();
+  // }, []);
 
   const handleFileChange = (file: File) => {
     setUploadedFile(file);
@@ -123,12 +115,12 @@ const Stepper = () => {
     return (
       <SecondPage
         props={{
-          recommendedEmotion: recommendedEmotion || "",
-          recommendedEmotionReason: recommendedEmotionReason || "",
-          inappropriateEmotion: inappropriateEmotion || "",
-          inappropriateEmotionReason: inappropriateEmotionReason || "",
-          summaryText: affectiveNarrative || "",
-          visualizationImages: [],
+          // recommendedEmotion: recommendedEmotion || "",
+          // recommendedEmotionReason: recommendedEmotionReason || "",
+          // inappropriateEmotion: inappropriateEmotion || "",
+          // inappropriateEmotionReason: inappropriateEmotionReason || "",
+          // summaryText: affectiveNarrative || "",
+          // visualizationImages: [],
           sessionId: sessionId,
         }}
       />

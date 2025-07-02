@@ -1,13 +1,8 @@
-import { useState } from "react";
-import Loading from "./Loading";
+import { memo, useState } from "react";
 
-import { emotions as emotion_list } from "../constatnt/emotions";
+import { emotions as emotion_list } from "../constant/emotions";
 import type { GenerateNarrativePayload as generatePayload } from "../api/generateNarrative";
-
-import clp_1 from "../assets/pallete/clp_1.png";
-import clp_2 from "../assets/pallete/clp_2.png";
-import clp_3 from "../assets/pallete/clp_3.png";
-import clp_4 from "../assets/pallete/clp_4.png";
+import { useWebSocket } from "../contexts/WebSocketContext";
 
 interface Prop {
   recommendedEmotion?: string;
@@ -26,20 +21,17 @@ const colorOptions = [
   ["#9B59B6", "#3498DB", "#2ECC71"],
 ];
 
-const EmotionStep = ({
+const UserAgency = ({
   props = {
-    recommendedEmotion: "",
-    recommendedEmotionReason: "",
-    inappropriateEmotion: "",
-    inappropriateEmotionReason: "",
     emitClickGenerate: (_: generatePayload) => {},
   },
 }: {
   props: Prop;
 }) => {
   console.log("[User Agency] App component rendering...");
+  const { recommendedEmotion, recommendedEmotionReason } = useWebSocket();
   const [selectedEmotion, setSelectedEmotion] = useState(
-    props.recommendedEmotion || "joy"
+    recommendedEmotion || "joy"
   );
   const [emotionIntensity, setEmotionIntensity] = useState(1);
   const [selectedWordCount, setWordCount] = useState(200);
@@ -79,12 +71,12 @@ const EmotionStep = ({
               <label className="block text-base font-medium text-gray-700 mb-2">
                 The Story Emotion:
               </label>
-              {props.recommendedEmotion && (
+              {recommendedEmotion && (
                 <span className="text-sm text-gray-500">
                   The recommended emotion is{" "}
-                  <span className="font-bold">{props.recommendedEmotion}</span>
+                  <span className="font-bold">{recommendedEmotion}</span>
                   {" as "}
-                  {props.recommendedEmotionReason}
+                  {recommendedEmotionReason}
                 </span>
               )}
             </div>
@@ -256,4 +248,4 @@ const EmotionStep = ({
     </>
   );
 };
-export default EmotionStep;
+export default memo(UserAgency);

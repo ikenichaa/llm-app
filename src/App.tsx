@@ -8,6 +8,7 @@ import {
 import MainLayout from "./layouts/MainLayout";
 import NotFoundPage from "./pages/NotFoundPage";
 import Stepper from "./layouts/Stepper";
+import { WebSocketProvider } from "./contexts/WebSocketContext";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -19,7 +20,11 @@ const App = () => {
     )
   );
 
-  return <RouterProvider router={router} />;
+  return (
+    <WebSocketProvider>
+      <RouterProvider router={router} />
+    </WebSocketProvider>
+  );
 };
 
 export default App;

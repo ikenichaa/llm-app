@@ -8,13 +8,7 @@ import Summary from "../components/Summary";
 import { generateAffectiveNarrative } from "../api/generateNarrative";
 
 interface SecondPageProps {
-  recommendedEmotion?: string;
-  recommendedEmotionReason?: string;
-  inappropriateEmotion?: string;
-  inappropriateEmotionReason?: string;
-  summaryText?: string;
   sessionId: string;
-  visualizationImages: string[];
 }
 
 const LoadingModal = () => {
@@ -34,22 +28,15 @@ const LoadingModal = () => {
 
 const SecondPage = ({
   props = {
-    recommendedEmotion: "",
-    recommendedEmotionReason: "",
-    inappropriateEmotion: "",
-    inappropriateEmotionReason: "",
-
-    summaryText: "",
     sessionId: "",
-    visualizationImages: [],
   },
 }: {
   props: SecondPageProps;
 }) => {
   // const SecondPage = () => {
-  const [isLoadingEmotion, setLoadingEmotion] = useState<boolean>(
-    !props.recommendedEmotion
-  );
+  // const [isLoadingEmotion, setLoadingEmotion] = useState<boolean>(
+  //   !props.recommendedEmotion
+  // );
 
   const [isGeneratingNarrative, setGeneratingNarrative] =
     useState<boolean>(false);
@@ -60,37 +47,32 @@ const SecondPage = ({
     setGeneratingNarrative(true);
   };
 
-  useEffect(() => {
-    if (props.recommendedEmotion) {
-      setLoadingEmotion(false);
-    } else {
-      setLoadingEmotion(true);
-    }
-  }, [props.recommendedEmotion]);
+  // useEffect(() => {
+  //   if (props.recommendedEmotion) {
+  //     setLoadingEmotion(false);
+  //   } else {
+  //     setLoadingEmotion(true);
+  //   }
+  // }, [props.recommendedEmotion]);
 
-  useEffect(() => {
-    if (
-      props.summaryText !== "" &&
-      (props.visualizationImages?.length ?? 0) > 0
-    ) {
-      setGeneratingNarrative(false);
-    }
-  }, [props.summaryText, props.visualizationImages]);
+  // useEffect(() => {
+  //   if (
+  //     props.summaryText !== "" &&
+  //     (props.visualizationImages?.length ?? 0) > 0
+  //   ) {
+  //     setGeneratingNarrative(false);
+  //   }
+  // }, [props.summaryText, props.visualizationImages]);
 
   return (
     <>
       <div className="w-full flex flex-col lg:flex-row gap-6">
         {/* Conditionally render the LoadingSpinner over this page */}
-        {isLoadingEmotion && <LoadingModal />}
+        {/* {isLoadingEmotion && <LoadingModal />} */}
         {/* <!-- Left Column: Input Controls --> */}
         <section className="self-start lg:w-2/5 p-6 bg-white rounded-lg shadow-xl flex flex-col gap-y-5">
           <UserAgency
             props={{
-              recommendedEmotion: props.recommendedEmotion || "",
-              recommendedEmotionReason: props.recommendedEmotionReason || "",
-              inappropriateEmotion: props.inappropriateEmotion || "",
-              inappropriateEmotionReason:
-                props.inappropriateEmotionReason || "",
               emitClickGenerate: handleClickGenerate,
             }}
           />
@@ -101,16 +83,10 @@ const SecondPage = ({
           className={`lg:w-1/2 p-6 bg-white rounded-lg shadow-xl flex flex-col gap-y-6 relative`}
         >
           {/* Overlay to make it unclickable and visually faded */}
-          {!isGeneratingNarrative && props.summaryText == "" && (
+          {/* {!isGeneratingNarrative && props.summaryText == "" && (
             <div className="absolute inset-0 bg-gray-300 bg-opacity-60 rounded-lg flex items-center justify-center text-gray-700 text-xl font-semibold opacity-55"></div>
-          )}
-          <Summary
-            props={{
-              summaryText: props.summaryText,
-              isGeneratingNarrative: isGeneratingNarrative,
-              visualizationImages: props.visualizationImages,
-            }}
-          />
+          )} */}
+          <Summary />
         </section>
       </div>
     </>

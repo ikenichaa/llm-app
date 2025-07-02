@@ -58,7 +58,7 @@ export async function generateAffectiveNarrative(
 
     // Parse the JSON response body
     const data: GenerateNarrativeResponse = await response.json();
-    console.log("Affective narrative generated successfully:", data);
+    console.log("Generating Affective Narrative...", data);
     return data;
   } catch (error) {
     console.error("Error generating affective narrative:", error);

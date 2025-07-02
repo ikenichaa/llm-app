@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
+
+import { useWebSocket } from "../contexts/WebSocketContext"; // Adjust path as needed
 
 interface summaryProp {
   summaryText?: string;
@@ -17,32 +19,40 @@ const visualizationImages = [
   "https://placehold.co/500x300/bae1ff/ffffff?text=Visualization+Image+5",
 ];
 
-const SummaryStep = ({
-  props = {
-    summaryText: "",
-    isGeneratingNarrative: false,
-    visualizationImages: [],
-  },
-}: {
-  props: summaryProp;
+const SummaryStep = ({}: // props = {
+// summaryText: "",
+// isGeneratingNarrative: false,
+// visualizationImages: [],
+// },
+{
+  // props: summaryProp;
 }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const {
+    summary,
+    visualizationImages,
+    currentImageIndex,
+    nextImage,
+    prevImage,
+    isOutputReady,
+  } = useWebSocket();
 
-  // Function to navigate to the next image
-  const nextImage = () => {
-    setCurrentImageIndex(
-      (prevIndex) => (prevIndex + 1) % visualizationImages.length
-    );
-  };
+  // const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Function to navigate to the previous image
-  const prevImage = () => {
-    setCurrentImageIndex(
-      (prevIndex) =>
-        (prevIndex - 1 + visualizationImages.length) %
-        visualizationImages.length
-    );
-  };
+  // // Function to navigate to the next image
+  // const nextImage = () => {
+  //   setCurrentImageIndex(
+  //     (prevIndex) => (prevIndex + 1) % visualizationImages.length
+  //   );
+  // };
+
+  // // Function to navigate to the previous image
+  // const prevImage = () => {
+  //   setCurrentImageIndex(
+  //     (prevIndex) =>
+  //       (prevIndex - 1 + visualizationImages.length) %
+  //       visualizationImages.length
+  //   );
+  // };
 
   return (
     <>
@@ -53,24 +63,20 @@ const SummaryStep = ({
       {/* Summary */}
       <div className="bg-gray-50 p-6 rounded-md border border-gray-200 min-h-[150px]">
         <h3 className="text-lg font-semibold text-gray-800 mb-3">Summary</h3>
-        {props.isGeneratingNarrative && props.summaryText == "" && (
+        {summary == "" && (
           <div className="flex justify-center items-center space-x-2">
             <span>Loading</span>
             <div className="w-8 h-8 border-4 border-blue-400 border-t-blue-600 rounded-full animate-spin"></div>
           </div>
         )}
-        <p className="text-gray-700 leading-relaxed text-justify">
-          {" "}
-          {props.summaryText}
-        </p>
+        <p className="text-gray-700 leading-relaxed text-justify"> {summary}</p>
       </div>
 
       {/* Visualization Gallery */}
       <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
         <div className="flex flex-col">
           <h3 className="text-lg font-semibold text-gray-800">Visualization</h3>
-          {(props.isGeneratingNarrative ||
-            (props.visualizationImages?.length ?? 0) == 0) && (
+          {(visualizationImages?.length ?? 0) == 0 && (
             <div className="flex justify-center items-center space-x-2">
               <span>Loading</span>
               <div className="w-8 h-8 border-4 border-blue-400 border-t-blue-600 rounded-full animate-spin"></div>
@@ -78,7 +84,7 @@ const SummaryStep = ({
           )}
         </div>
         <div className="relative w-full">
-          {(props.visualizationImages ?? []).length > 0 && (
+          {(visualizationImages ?? []).length > 0 && (
             <>
               <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
                 {/* Dynamically render images based on current index */}
@@ -127,4 +133,4 @@ const SummaryStep = ({
   );
 };
 
-export default SummaryStep;
+export default memo(SummaryStep); // Memoize Summary as well
