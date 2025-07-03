@@ -5,54 +5,50 @@ import { FaArrowRight } from "react-icons/fa";
 import { useWebSocket } from "../contexts/WebSocketContext"; // Adjust path as needed
 
 interface summaryProp {
-  summaryText?: string;
   isGeneratingNarrative: boolean;
-  visualizationImages?: string[];
 }
 
 // Array of image URLs for the visualization gallery
-const visualizationImages = [
-  "https://placehold.co/500x300/a0c4ff/ffffff?text=Visualization+Image+1",
-  "https://placehold.co/500x300/ffadad/ffffff?text=Visualization+Image+2",
-  "https://placehold.co/500x300/ffd6a5/ffffff?text=Visualization+Image+3",
-  "https://placehold.co/500x300/caffbf/ffffff?text=Visualization+Image+4",
-  "https://placehold.co/500x300/bae1ff/ffffff?text=Visualization+Image+5",
-];
+// const visualizationImages = [
+//   "https://placehold.co/500x300/a0c4ff/ffffff?text=Visualization+Image+1",
+//   "https://placehold.co/500x300/ffadad/ffffff?text=Visualization+Image+2",
+//   "https://placehold.co/500x300/ffd6a5/ffffff?text=Visualization+Image+3",
+//   "https://placehold.co/500x300/caffbf/ffffff?text=Visualization+Image+4",
+//   "https://placehold.co/500x300/bae1ff/ffffff?text=Visualization+Image+5",
+// ];
 
-const SummaryStep = ({}: // props = {
-// summaryText: "",
-// isGeneratingNarrative: false,
-// visualizationImages: [],
-// },
-{
-  // props: summaryProp;
+const SummaryStep = ({
+  props = {
+    // summaryText: "",
+    isGeneratingNarrative: false,
+    // visualizationImages: [],
+  },
+}: {
+  props: summaryProp;
 }) => {
   const {
     summary,
     visualizationImages,
-    currentImageIndex,
-    nextImage,
-    prevImage,
-    isOutputReady,
+    // isOutputReady,
   } = useWebSocket();
 
-  // const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // // Function to navigate to the next image
-  // const nextImage = () => {
-  //   setCurrentImageIndex(
-  //     (prevIndex) => (prevIndex + 1) % visualizationImages.length
-  //   );
-  // };
+  // Function to navigate to the next image
+  const nextImage = () => {
+    setCurrentImageIndex(
+      (prevIndex) => (prevIndex + 1) % visualizationImages.length
+    );
+  };
 
-  // // Function to navigate to the previous image
-  // const prevImage = () => {
-  //   setCurrentImageIndex(
-  //     (prevIndex) =>
-  //       (prevIndex - 1 + visualizationImages.length) %
-  //       visualizationImages.length
-  //   );
-  // };
+  // Function to navigate to the previous image
+  const prevImage = () => {
+    setCurrentImageIndex(
+      (prevIndex) =>
+        (prevIndex - 1 + visualizationImages.length) %
+        visualizationImages.length
+    );
+  };
 
   return (
     <>
@@ -63,7 +59,7 @@ const SummaryStep = ({}: // props = {
       {/* Summary */}
       <div className="bg-gray-50 p-6 rounded-md border border-gray-200 min-h-[150px]">
         <h3 className="text-lg font-semibold text-gray-800 mb-3">Summary</h3>
-        {summary == "" && (
+        {props.isGeneratingNarrative && summary == "" && (
           <div className="flex justify-center items-center space-x-2">
             <span>Loading</span>
             <div className="w-8 h-8 border-4 border-blue-400 border-t-blue-600 rounded-full animate-spin"></div>
@@ -75,18 +71,21 @@ const SummaryStep = ({}: // props = {
       {/* Visualization Gallery */}
       <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
         <div className="flex flex-col">
-          <h3 className="text-lg font-semibold text-gray-800">Visualization</h3>
-          {(visualizationImages?.length ?? 0) == 0 && (
-            <div className="flex justify-center items-center space-x-2">
-              <span>Loading</span>
-              <div className="w-8 h-8 border-4 border-blue-400 border-t-blue-600 rounded-full animate-spin"></div>
-            </div>
-          )}
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            Visualization
+          </h3>
+          {props.isGeneratingNarrative &&
+            (visualizationImages?.length ?? 0) == 0 && (
+              <div className="flex justify-center items-center space-x-2">
+                <span>Loading</span>
+                <div className="w-8 h-8 border-4 border-blue-400 border-t-blue-600 rounded-full animate-spin"></div>
+              </div>
+            )}
         </div>
         <div className="relative w-full">
           {(visualizationImages ?? []).length > 0 && (
             <>
-              <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
+              <div className="relative h-56 rounded-lg md:h-96">
                 {/* Dynamically render images based on current index */}
                 {visualizationImages.map((src, index) => (
                   <div

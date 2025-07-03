@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
@@ -13,54 +13,6 @@ const Stepper = () => {
   const { sessionId } = useWebSocket();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [storyDescription, setStoryDescription] = useState<string>("");
-  // const [ws, setWs] = useState<null | WebSocket>(null);
-  // const [sessionId] = useState(() => uuidv4());
-
-  // useEffect(() => {
-  //   console.log("Creating WebSocket connection...");
-  //   console.log("Session ID:", sessionId);
-  //   const websocket = new WebSocket(
-  //     "ws://127.0.0.1:8000/websocket/ws/" + sessionId
-  //   );
-  //   setWs(websocket);
-
-  //   websocket.onopen = () =>
-  //     console.log(
-  //       `Connected to WebSocket server with session ID: ${sessionId}`
-  //     );
-  //   websocket.onmessage = (event) => {
-  //     console.log("Received message:", event);
-  //     console.log("Message from server:", event.data);
-  //     const data = JSON.parse(event.data);
-  //     console.log("Parsed data:", data);
-  //     if (data["data"]["title"] === "recommended_emotion") {
-  //       setRecommendedEmotion(data["data"]["result"]["emotion"]);
-  //       setRecommendedEmotionReason(data["data"]["result"]["reason"]);
-  //     }
-
-  //     if (data["data"]["title"] === "inappropriate_emotion") {
-  //       if (data["data"]["result"]["is_there_inappropriate_emotion"]) {
-  //         setInappropriateEmotion(
-  //           data["data"]["result"]["inappropriate_emotion"]
-  //         );
-  //         setInappropriateEmotionReason(data["data"]["result"]["reason"]);
-  //       }
-  //     }
-
-  //     if (data["data"]["title"] === "affective_narrative") {
-  //       console.log("Received affective narrative data:", data);
-  //       setAffectiveNarrative(data["data"]["result"]);
-  //     }
-  //   };
-
-  //   websocket.onclose = () =>
-  //     console.log(
-  //       `Disconnected from WebSocket server with session ID: ${sessionId}`
-  //     );
-
-  //   // Cleanup on unmount
-  //   return () => websocket.close();
-  // }, []);
 
   const handleFileChange = (file: File) => {
     setUploadedFile(file);
@@ -115,16 +67,34 @@ const Stepper = () => {
     return (
       <SecondPage
         props={{
-          // recommendedEmotion: recommendedEmotion || "",
-          // recommendedEmotionReason: recommendedEmotionReason || "",
-          // inappropriateEmotion: inappropriateEmotion || "",
-          // inappropriateEmotionReason: inappropriateEmotionReason || "",
-          // summaryText: affectiveNarrative || "",
-          // visualizationImages: [],
           sessionId: sessionId,
         }}
       />
     );
+
+    // return (
+    //   <>
+    //     <div className={`${activeStep === "first" ? "" : "hidden"}`}>
+    //       <FirstPage
+    //         props={{
+    //           fileEmitter: handleFileChange,
+    //           descriptionEmitter: handleDescriptionChange,
+    //           file: uploadedFile,
+    //           description: storyDescription,
+    //           activeStep: activeStep,
+    //         }}
+    //       />
+    //     </div>
+
+    //     <div className={`${activeStep === "first" ? "hidden" : ""}`}>
+    //       <SecondPage
+    //         props={{
+    //           sessionId: sessionId,
+    //         }}
+    //       />
+    //     </div>
+    //   </>
+    // );
   };
 
   return (
@@ -137,10 +107,9 @@ const Stepper = () => {
             type="button"
             className={
               activeStep === "first"
-                ? "text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
-                : "text-gray hover:text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
+                ? "text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
+                : "text-gray focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
             }
-            onClick={() => setActiveStep(previousStep())}
           >
             1. Upload file & Description
           </button>
@@ -153,10 +122,9 @@ const Stepper = () => {
             type="button"
             className={
               activeStep === "second"
-                ? "text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
-                : "text-gray hover:text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
+                ? "text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
+                : "text-gray focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
             }
-            onClick={() => nextStep()}
           >
             2. User Agency & Summary
           </button>
@@ -167,18 +135,18 @@ const Stepper = () => {
           </div>
         </main>
         {/* Sticky footer */}
-        <div className="flex justify-center sticky bottom-0 bg-white rounded-lg shadow-2xl p-3">
+        <div className="flex justify-center sticky bottom-0 bg-white rounded-lg shadow-2xl p-3 z-30">
           {activeStep == "second" && (
             <button
-              onClick={() => setActiveStep(previousStep())}
+              onClick={() => window.location.reload()}
               type="button"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               <div className="flex">
                 <div className="pr-1 pt-0.5">
                   <FaAnglesLeft />
                 </div>
-                Previous
+                Clear Data and Restart
               </div>
             </button>
           )}

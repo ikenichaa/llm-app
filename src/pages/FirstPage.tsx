@@ -46,10 +46,7 @@ const UploadStep = ({
 
   const handleDescriptionChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const description = event.target.value;
-    if (description.length > 0) {
-      setDescription(description);
-      // props.descriptionEmitter(description);
-    }
+    setDescription(description);
   };
 
   return (

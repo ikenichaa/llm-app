@@ -9,30 +9,45 @@ import React, {
 import type { ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid";
 
+// --- Constants (moved from UserAgency for context initialization) ---
+const INITIAL_WORD_COUNT = 200;
+const INITIAL_PURPOSE = "Inform";
+const INITIAL_COLOR_SCHEME = ["#4A90E2", "#50E3C2", "#FF6B6B"].join(","); // Default first color scheme
+
 // --- Interfaces for Context Data ---
-interface GenerateNarrativePayload {
+export interface GenerateNarrativePayload {
+  // Exported for use in UserAgency
   emotion: string;
   intensity_level: number;
   word_count: number;
   purpose: string;
-  colorScheme: string; // Added colorScheme to payload
+  colorScheme: string;
 }
 
 interface WebSocketContextType {
   sessionId: string;
   summary: string;
+  setSummary: (summary: string) => void;
   visualizationImages: string[];
-  currentImageIndex: number;
-  nextImage: () => void;
-  prevImage: () => void;
+  setVisualizationImages: (images: string[]) => void;
   recommendedEmotion: string;
   recommendedEmotionReason: string;
   inappropriateEmotion: string;
   inappropriateEmotionReason: string;
-  isLoading: boolean;
-  loadingMessage: string;
-  isOutputReady: boolean;
-  sendMessage: (payload: any) => void; // Function to send messages via WebSocket
+  isGeneratingSummary: boolean;
+  setIsGeneratingSummary: (generating: boolean) => void;
+
+  // NEW: User input states managed by context
+  selectedEmotion: string;
+  setSelectedEmotion: (emotion: string) => void;
+  emotionIntensity: number;
+  setEmotionIntensity: (intensity: number) => void;
+  selectedWordCount: number;
+  setWordCount: (count: number) => void;
+  purpose: string;
+  setPurpose: (purpose: string) => void;
+  colorScheme: string;
+  setColorScheme: (scheme: string) => void;
 }
 
 // --- Create the Context ---
@@ -53,20 +68,39 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 
   // States that will be shared via context
   const [summary, setSummary] = useState<string>("");
-  const [visualizationImages, setVisualizationImages] = useState<string[]>([
-    "https://placehold.co/500x300/e0e0e0/333333?text=Visualization+Placeholder", // Initial placeholder
-  ]);
-  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const [visualizationImages, setVisualizationImages] = useState<string[]>([]);
   const [recommendedEmotion, setRecommendedEmotion] = useState<string>("");
   const [recommendedEmotionReason, setRecommendedEmotionReason] =
     useState<string>("");
   const [inappropriateEmotion, setInappropriateEmotion] = useState<string>("");
   const [inappropriateEmotionReason, setInappropriateEmotionReason] =
     useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isGeneratingSummary, setIsGeneratingSummary] =
+    useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] =
     useState<string>("Preparing data...");
   const [isOutputReady, setIsOutputReady] = useState<boolean>(false);
+  // NEW: User input states, now managed by the context
+  const [selectedEmotion, setSelectedEmotion] = useState<string>("joy"); // Default initial emotion
+  const [isEmotionInitialized, setIsEmotionInitialized] = useState(false); // Flag for initial set
+  const [emotionIntensity, setEmotionIntensity] = useState<number>(1);
+  const [selectedWordCount, setWordCount] =
+    useState<number>(INITIAL_WORD_COUNT);
+  const [purpose, setPurpose] = useState<string>(INITIAL_PURPOSE);
+  const [colorScheme, setColorScheme] = useState<string>(INITIAL_COLOR_SCHEME);
+
+  // Effect to initialize selectedEmotion from recommendedEmotion only once
+  useEffect(() => {
+    if (recommendedEmotion && !isEmotionInitialized) {
+      console.log(
+        "Initializing selectedEmotion from recommendedEmotion:",
+        recommendedEmotion
+      );
+      // Set the selected emotion to the recommended
+      setSelectedEmotion(recommendedEmotion.toLowerCase());
+      setIsEmotionInitialized(true); // Mark as initialized
+    }
+  }, [recommendedEmotion, isEmotionInitialized]);
 
   // Function to send messages over WebSocket
   const sendMessage = useCallback((payload: any) => {
@@ -112,8 +146,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       } catch (e) {
         console.error("WebSocket: Failed to parse message:", e, event.data);
         setSummary(`Received unparseable message: ${event.data}`);
-        setIsLoading(false);
-        setIsOutputReady(false);
       }
     };
 
@@ -125,8 +157,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     ws.current.onerror = (error) => {
       console.error("WebSocket: Error:", error);
       setLoadingMessage("Connection error. Please try again.");
-      setIsLoading(false);
-      setIsOutputReady(false);
     };
 
     // Cleanup: Close WebSocket when component unmounts
@@ -137,41 +167,31 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     };
   }, [sessionId]); // Re-run effect only if sessionId changes (which it won't after initial mount)
 
-  // Navigation functions for visualization gallery
-  const nextImage = useCallback(() => {
-    if (isOutputReady) {
-      setCurrentImageIndex(
-        (prevIndex) => (prevIndex + 1) % visualizationImages.length
-      );
-    }
-  }, [isOutputReady, visualizationImages.length]);
-
-  const prevImage = useCallback(() => {
-    if (isOutputReady) {
-      setCurrentImageIndex(
-        (prevIndex) =>
-          (prevIndex - 1 + visualizationImages.length) %
-          visualizationImages.length
-      );
-    }
-  }, [isOutputReady, visualizationImages.length]);
-
   // Context value to be provided to consumers
   const contextValue: WebSocketContextType = {
     sessionId,
     summary,
+    setSummary,
     visualizationImages,
-    currentImageIndex,
-    nextImage,
-    prevImage,
+    setVisualizationImages,
     recommendedEmotion,
     recommendedEmotionReason,
     inappropriateEmotion,
     inappropriateEmotionReason,
-    isLoading,
-    loadingMessage,
-    isOutputReady,
-    sendMessage,
+    isGeneratingSummary,
+    setIsGeneratingSummary,
+
+    // NEW: Provide user input states and their setters
+    selectedEmotion,
+    setSelectedEmotion,
+    emotionIntensity,
+    setEmotionIntensity,
+    selectedWordCount,
+    setWordCount,
+    purpose,
+    setPurpose,
+    colorScheme,
+    setColorScheme,
   };
 
   return (

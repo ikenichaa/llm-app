@@ -1,14 +1,10 @@
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 
 import { emotions as emotion_list } from "../constant/emotions";
 import type { GenerateNarrativePayload as generatePayload } from "../api/generateNarrative";
 import { useWebSocket } from "../contexts/WebSocketContext";
 
 interface Prop {
-  recommendedEmotion?: string;
-  recommendedEmotionReason?: string;
-  inappropriateEmotion?: string;
-  inappropriateEmotionReason?: string;
   emitClickGenerate?: (arg0: generatePayload) => void;
 }
 
@@ -29,14 +25,28 @@ const UserAgency = ({
   props: Prop;
 }) => {
   console.log("[User Agency] App component rendering...");
-  const { recommendedEmotion, recommendedEmotionReason } = useWebSocket();
-  const [selectedEmotion, setSelectedEmotion] = useState(
-    recommendedEmotion || "joy"
-  );
-  const [emotionIntensity, setEmotionIntensity] = useState(1);
-  const [selectedWordCount, setWordCount] = useState(200);
-  const [purpose, setPurpose] = useState("Inform");
-  const [colorScheme, setColorScheme] = useState(colorOptions[0].join(","));
+  const {
+    recommendedEmotion,
+    recommendedEmotionReason,
+    selectedEmotion,
+    setSelectedEmotion,
+    emotionIntensity,
+    setEmotionIntensity,
+    selectedWordCount,
+    setWordCount,
+    purpose,
+    setPurpose,
+    colorScheme,
+    setColorScheme,
+    isGeneratingSummary, // To disable button when generating
+  } = useWebSocket();
+  // const [selectedEmotion, setSelectedEmotion] = useState(
+  //   recommendedEmotion || "joy"
+  // );
+  // const [emotionIntensity, setEmotionIntensity] = useState(1);
+  // const [selectedWordCount, setWordCount] = useState(200);
+  // const [purpose, setPurpose] = useState("Inform");
+  // const [colorScheme, setColorScheme] = useState(colorOptions[0].join(","));
 
   // Example handler for the submit button
   const handleSubmit = async () => {
@@ -85,7 +95,13 @@ const UserAgency = ({
                 <button
                   key={emotion.id}
                   type="button"
-                  onClick={() => setSelectedEmotion(emotion.name.toLowerCase())}
+                  onClick={() => {
+                    console.log(
+                      "[User Agency]: Setting selected emotion to",
+                      emotion.name
+                    );
+                    setSelectedEmotion(emotion.name.toLowerCase());
+                  }}
                   className={`
                     px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200
                     ${
@@ -116,7 +132,7 @@ const UserAgency = ({
             <div className="flex items-center space-x-3">
               <button
                 onClick={() =>
-                  setEmotionIntensity((prev) => Math.max(1, prev - 1))
+                  setEmotionIntensity(Math.max(0, emotionIntensity - 1))
                 }
                 className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -127,7 +143,7 @@ const UserAgency = ({
               </span>
               <button
                 onClick={() =>
-                  setEmotionIntensity((prev) => Math.min(10, prev + 1))
+                  setEmotionIntensity(Math.min(10, emotionIntensity + 1))
                 }
                 className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -230,9 +246,18 @@ const UserAgency = ({
           <div className="mt-4 pt-4 border-t border-gray-200">
             <button
               onClick={handleSubmit}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300"
+              disabled={isGeneratingSummary}
+              className={`
+          w-full px-6 py-3 rounded-lg text-white font-semibold transition-all duration-300
+          ${
+            isGeneratingSummary
+              ? "bg-blue-400 cursor-not-allowed opacity-70" // Styles when disabled
+              : "bg-blue-600 hover:bg-blue-700 shadow-lg transform hover:scale-105" // Styles when enabled
+          }
+          focus:outline-none focus:ring-4 focus:ring-blue-300
+        `}
             >
-              Generate Summary & Visualization
+              {isGeneratingSummary ? "Generating Output..." : "Generate Output"}
             </button>
           </div>
         </div>
