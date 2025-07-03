@@ -4,7 +4,6 @@ import React, {
   useState,
   useEffect,
   useRef,
-  useCallback,
 } from "react";
 import type { ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -32,7 +31,7 @@ interface WebSocketContextType {
   setVisualizationImages: (images: string[]) => void;
   recommendedEmotion: string;
   recommendedEmotionReason: string;
-  inappropriateEmotion: string;
+  inappropriateEmotion: string[];
   inappropriateEmotionReason: string;
   isGeneratingSummary: boolean;
   setIsGeneratingSummary: (generating: boolean) => void;
@@ -72,16 +71,16 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   const [recommendedEmotion, setRecommendedEmotion] = useState<string>("");
   const [recommendedEmotionReason, setRecommendedEmotionReason] =
     useState<string>("");
-  const [inappropriateEmotion, setInappropriateEmotion] = useState<string>("");
+  const [inappropriateEmotion, setInappropriateEmotion] = useState<string[]>(
+    []
+  );
   const [inappropriateEmotionReason, setInappropriateEmotionReason] =
     useState<string>("");
   const [isGeneratingSummary, setIsGeneratingSummary] =
     useState<boolean>(false);
-  const [loadingMessage, setLoadingMessage] =
-    useState<string>("Preparing data...");
-  const [isOutputReady, setIsOutputReady] = useState<boolean>(false);
+
   // NEW: User input states, now managed by the context
-  const [selectedEmotion, setSelectedEmotion] = useState<string>("joy"); // Default initial emotion
+  const [selectedEmotion, setSelectedEmotion] = useState<string>(""); // Default initial emotion
   const [isEmotionInitialized, setIsEmotionInitialized] = useState(false); // Flag for initial set
   const [emotionIntensity, setEmotionIntensity] = useState<number>(1);
   const [selectedWordCount, setWordCount] =
@@ -101,17 +100,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       setIsEmotionInitialized(true); // Mark as initialized
     }
   }, [recommendedEmotion, isEmotionInitialized]);
-
-  // Function to send messages over WebSocket
-  const sendMessage = useCallback((payload: any) => {
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      ws.current.send(JSON.stringify(payload));
-      console.log("Sent data via WebSocket:", payload);
-    } else {
-      console.warn("WebSocket is not open. Cannot send data.");
-      // Optionally, queue messages or show an error to the user
-    }
-  }, []);
 
   // WebSocket connection and message handling
   useEffect(() => {
@@ -135,9 +123,15 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
             setRecommendedEmotionReason(message["data"]["result"]["reason"]);
             break;
           case "inappropriate_emotion":
-            setInappropriateEmotion(
-              message["data"]["result"]["is_there_inappropriate_emotion"]
-            );
+            const emotion_list = message["data"]["result"][
+              "inappropriate_emotions"
+            ].map((e: string) => e.toLowerCase());
+
+            console.log(`To lower case`);
+            console.log(emotion_list);
+            console.log(typeof emotion_list);
+
+            setInappropriateEmotion(emotion_list);
             setInappropriateEmotionReason(message["data"]["result"]["reason"]);
             break;
           default:
@@ -145,7 +139,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         }
       } catch (e) {
         console.error("WebSocket: Failed to parse message:", e, event.data);
-        setSummary(`Received unparseable message: ${event.data}`);
+        // setSummary(`Received unparseable message: ${event.data}`);
       }
     };
 
@@ -156,7 +150,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 
     ws.current.onerror = (error) => {
       console.error("WebSocket: Error:", error);
-      setLoadingMessage("Connection error. Please try again.");
     };
 
     // Cleanup: Close WebSocket when component unmounts

@@ -1,4 +1,5 @@
-import { memo, useState, useEffect } from "react";
+import { memo } from "react";
+import { Tooltip } from "flowbite-react";
 
 import { emotions as emotion_list } from "../constant/emotions";
 import type { GenerateNarrativePayload as generatePayload } from "../api/generateNarrative";
@@ -28,6 +29,8 @@ const UserAgency = ({
   const {
     recommendedEmotion,
     recommendedEmotionReason,
+    inappropriateEmotion,
+    inappropriateEmotionReason,
     selectedEmotion,
     setSelectedEmotion,
     emotionIntensity,
@@ -40,13 +43,6 @@ const UserAgency = ({
     setColorScheme,
     isGeneratingSummary, // To disable button when generating
   } = useWebSocket();
-  // const [selectedEmotion, setSelectedEmotion] = useState(
-  //   recommendedEmotion || "joy"
-  // );
-  // const [emotionIntensity, setEmotionIntensity] = useState(1);
-  // const [selectedWordCount, setWordCount] = useState(200);
-  // const [purpose, setPurpose] = useState("Inform");
-  // const [colorScheme, setColorScheme] = useState(colorOptions[0].join(","));
 
   // Example handler for the submit button
   const handleSubmit = async () => {
@@ -91,31 +87,50 @@ const UserAgency = ({
               )}
             </div>
             <div className="flex flex-wrap gap-2">
-              {emotion_list.map((emotion) => (
-                <button
-                  key={emotion.id}
-                  type="button"
-                  onClick={() => {
-                    console.log(
-                      "[User Agency]: Setting selected emotion to",
-                      emotion.name
-                    );
-                    setSelectedEmotion(emotion.name.toLowerCase());
-                  }}
-                  className={`
+              {emotion_list.map((emotion) => {
+                const isInappropriate = inappropriateEmotion.includes(
+                  emotion.name.toLowerCase()
+                );
+                const button = (
+                  <button
+                    key={emotion.id}
+                    type="button"
+                    onClick={() => {
+                      console.log(
+                        "[User Agency]: Setting selected emotion to",
+                        emotion.name
+                      );
+                      setSelectedEmotion(emotion.name.toLowerCase());
+                    }}
+                    disabled={isInappropriate}
+                    className={`
                     px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200
                     ${
-                      selectedEmotion === emotion.name.toLowerCase()
+                      isInappropriate // Priority 1: Inappropriate/Disabled
+                        ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed opacity-70"
+                        : selectedEmotion === emotion.name.toLowerCase() // Priority 2: Selected
                         ? "bg-blue-600 text-white shadow-md"
-                        : "bg-gray-200 text-gray-800 hover:bg-blue-100 hover:text-blue-700"
+                        : "bg-gray-200 text-gray-800 hover:bg-blue-100 hover:text-blue-700" // Priority 3: Not selected but selectable
                     }
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:scale-105
                   `}
-                  aria-pressed={selectedEmotion === emotion.name.toLowerCase()}
-                >
-                  {emotion.name}
-                </button>
-              ))}
+                    aria-pressed={
+                      selectedEmotion === emotion.name.toLowerCase()
+                    }
+                  >
+                    {emotion.name}
+                  </button>
+                );
+                return isInappropriate ? (
+                  <Tooltip
+                    key={emotion.id}
+                    content={inappropriateEmotionReason}
+                  >
+                    {button}
+                  </Tooltip>
+                ) : (
+                  button
+                );
+              })}
             </div>
           </div>
 
