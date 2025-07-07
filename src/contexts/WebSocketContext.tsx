@@ -9,7 +9,7 @@ import type { ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 // --- Constants (moved from UserAgency for context initialization) ---
-const INITIAL_WORD_COUNT = 200;
+const INITIAL_WORD_COUNT = "200";
 const INITIAL_PURPOSE = "Inform";
 const INITIAL_COLOR_SCHEME = ["#4A90E2", "#50E3C2", "#FF6B6B"].join(","); // Default first color scheme
 
@@ -41,8 +41,8 @@ interface WebSocketContextType {
   setSelectedEmotion: (emotion: string) => void;
   emotionIntensity: number;
   setEmotionIntensity: (intensity: number) => void;
-  selectedWordCount: number;
-  setWordCount: (count: number) => void;
+  selectedWordCount: string;
+  setWordCount: (count: string) => void;
   purpose: string;
   setPurpose: (purpose: string) => void;
   colorScheme: string;
@@ -68,7 +68,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   // States that will be shared via context
   const [summary, setSummary] = useState<string>("");
   const [visualizationImages, setVisualizationImages] = useState<string[]>([]);
-  const [recommendedEmotion, setRecommendedEmotion] = useState<string>("");
+  const [recommendedEmotion, setRecommendedEmotion] = useState<string>("joy");
   const [recommendedEmotionReason, setRecommendedEmotionReason] =
     useState<string>("");
   const [inappropriateEmotion, setInappropriateEmotion] = useState<string[]>(
@@ -84,7 +84,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   const [isEmotionInitialized, setIsEmotionInitialized] = useState(false); // Flag for initial set
   const [emotionIntensity, setEmotionIntensity] = useState<number>(1);
   const [selectedWordCount, setWordCount] =
-    useState<number>(INITIAL_WORD_COUNT);
+    useState<string>(INITIAL_WORD_COUNT);
   const [purpose, setPurpose] = useState<string>(INITIAL_PURPOSE);
   const [colorScheme, setColorScheme] = useState<string>(INITIAL_COLOR_SCHEME);
 
@@ -115,7 +115,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       try {
         const message = JSON.parse(event.data);
         switch (message["data"]["title"]) {
-          case "affective_narrative":
+          case "affective_narrative_v2":
             setSummary(message["data"]["result"]);
             break;
           case "recommended_emotion":
@@ -131,6 +131,15 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
             console.log(emotion_list);
             console.log(typeof emotion_list);
 
+            if (emotion_list.includes(recommendedEmotion.toLowerCase())) {
+              console.log("Is include the recommendedEMotion");
+              emotion_list.splice(
+                emotion_list.indexOf(recommendedEmotion.toLowerCase()),
+                1
+              );
+            }
+
+            console.log(emotion_list);
             setInappropriateEmotion(emotion_list);
             setInappropriateEmotionReason(message["data"]["result"]["reason"]);
             break;

@@ -89,9 +89,6 @@ const SecondPage = ({
 
   useEffect(() => {
     if (summary !== "" && (visualizationImages?.length ?? 0) > 0) {
-      console.log("Setting generating to false????");
-      console.log(`Summary: ${summary}`);
-      console.log(`Visualization Images: ${visualizationImages}`);
       setIsGeneratingSummary(false);
     }
   }, [summary, visualizationImages]);

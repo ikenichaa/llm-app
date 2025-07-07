@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState, useEffect } from "react";
 import { Tooltip } from "flowbite-react";
 
 import { emotions as emotion_list } from "../constant/emotions";
@@ -9,15 +9,42 @@ interface Prop {
   emitClickGenerate?: (arg0: generatePayload) => void;
 }
 
-const word_count = [200, 300, 500];
 const purpose_list = ["Call to Action", "Provoke", "Explore", "Inform"];
 const colorOptions = [
-  ["#4A90E2", "#50E3C2", "#FF6B6B"], // Example color schemes
+  ["#4A90E2", "#50E3C2", "#FF6B6B"],
   ["#4A4A4A", "#8B0000", "#FFD700"],
   ["#FFB083", "#F9C784", "#F48C06"],
   ["#9B59B6", "#3498DB", "#2ECC71"],
 ];
 
+function WordCountSlider({
+  wordCount,
+  onSliderChange,
+}: {
+  wordCount: number;
+  onSliderChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <div>
+      {/* The range input (slider) */}
+      <input
+        id="word-count-slider"
+        type="range"
+        min="200"
+        max="500"
+        value={wordCount}
+        onChange={onSliderChange}
+        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+      />
+
+      {/* Displaying the current value of the slider */}
+      <div className="text-center mt-4">
+        <span className="text-lg font-semibold">{wordCount}</span>
+        <span className="text-sm text-gray-400"> words</span>
+      </div>
+    </div>
+  );
+}
 const UserAgency = ({
   props = {
     emitClickGenerate: (_: generatePayload) => {},
@@ -25,6 +52,13 @@ const UserAgency = ({
 }: {
   props: Prop;
 }) => {
+  const [localWordCount, localSetWordCount] = useState("350");
+
+  // This function will be passed down to the slider.
+  const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    localSetWordCount(event.target.value);
+  };
+
   console.log("[User Agency] App component rendering...");
   const {
     recommendedEmotion,
@@ -50,7 +84,7 @@ const UserAgency = ({
       props.emitClickGenerate({
         emotion: selectedEmotion,
         intensity_level: emotionIntensity,
-        word_count: selectedWordCount,
+        word_count: +selectedWordCount,
         purpose: purpose,
       });
     }
@@ -64,9 +98,26 @@ const UserAgency = ({
     });
   };
 
-  const EmotionBody = () => {
-    return (
-      <>
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (localWordCount !== selectedWordCount) {
+        console.log(`Debounced: Updating global context to ${localWordCount}`);
+        setWordCount(localWordCount);
+      }
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [localWordCount, selectedWordCount, setWordCount]);
+
+  useEffect(() => {
+    localSetWordCount(selectedWordCount);
+  }, [selectedWordCount]);
+
+  return (
+    <>
+      <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3 border-b pb-2 border-gray-200">
           Input Parameters
         </h2>
@@ -173,26 +224,13 @@ const UserAgency = ({
               Approximate Word Count:
             </label>
             <div className="flex flex-wrap gap-2">
-              {word_count.map((word) => (
-                <button
-                  key={word}
-                  type="button"
-                  onClick={() => setWordCount(word)}
-                  // Dynamically apply classes based on selection
-                  className={`
-                    px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200
-                    ${
-                      selectedWordCount === word
-                        ? "bg-blue-600 text-white shadow-md" // Selected style
-                        : "bg-gray-200 text-gray-800 hover:bg-blue-100 hover:text-blue-700" // Unselected style
-                    }
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                  `}
-                  aria-pressed={selectedWordCount === word} // For accessibility
-                >
-                  {word}
-                </button>
-              ))}
+              <div className="w-full mb-6">
+                <WordCountSlider
+                  wordCount={+localWordCount}
+                  onSliderChange={handleSliderChange}
+                />
+                {/* <Slider /> */}
+              </div>
             </div>
           </div>
 
@@ -266,8 +304,8 @@ const UserAgency = ({
           w-full px-6 py-3 rounded-lg text-white font-semibold transition-all duration-300
           ${
             isGeneratingSummary
-              ? "bg-blue-400 cursor-not-allowed opacity-70" // Styles when disabled
-              : "bg-blue-600 hover:bg-blue-700 shadow-lg transform hover:scale-105" // Styles when enabled
+              ? "bg-blue-400 cursor-not-allowed opacity-70"
+              : "bg-blue-600 hover:bg-blue-700 shadow-lg transform hover:scale-105"
           }
           focus:outline-none focus:ring-4 focus:ring-blue-300
         `}
@@ -276,14 +314,6 @@ const UserAgency = ({
             </button>
           </div>
         </div>
-      </>
-    );
-  };
-
-  return (
-    <>
-      <div>
-        <EmotionBody />
       </div>
     </>
   );

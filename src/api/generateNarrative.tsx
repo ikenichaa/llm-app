@@ -32,7 +32,7 @@ export async function generateAffectiveNarrative(
   payload: GenerateNarrativePayload
 ): Promise<GenerateNarrativeResponse> {
   // Construct the API URL using the provided session ID
-  const apiUrl = `http://127.0.0.1:8000/api/generate-affective-narrative/${sessionId}`;
+  const apiUrl = `http://127.0.0.1:8000/api/v2/generate-affective-narrative/${sessionId}`;
 
   try {
     const response = await fetch(apiUrl, {
