@@ -24,7 +24,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ fileUploaderSendFile }) => {
               <span className="font-semibold">Click to upload</span> or drag and
               drop
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">CSV</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              time-series CSV file
+            </p>
           </div>
           <input
             id="dropzone-file"
