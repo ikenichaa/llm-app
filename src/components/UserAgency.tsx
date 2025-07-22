@@ -16,15 +16,11 @@ const purpose_list = [
   },
   {
     id: "2",
-    name: "Provoke",
+    name: "Pursuade",
   },
   {
     id: "3",
-    name: "Explore",
-  },
-  {
-    id: "4",
-    name: "Call to action",
+    name: "Explain",
   },
 ];
 const colorOptions = [
@@ -89,12 +85,25 @@ const UserAgency = ({
     isGeneratingSummary, // To disable button when generating
   } = useWebSocket();
 
+  const emotionIntensityToString = (intensity: number): string => {
+    switch (intensity) {
+      case 1:
+        return "Low";
+      case 2:
+        return "Medium";
+      case 3:
+        return "High";
+      default:
+        return "Medium";
+    }
+  };
+
   // Example handler for the submit button
   const handleSubmit = async () => {
     if (props.emitClickGenerate) {
       props.emitClickGenerate({
         emotion: selectedEmotion,
-        intensity_level: emotionIntensity,
+        intensity_level: emotionIntensityToString(emotionIntensity),
         word_count: +selectedWordCount,
         purpose: purpose,
       });
@@ -202,27 +211,32 @@ const UserAgency = ({
               <label className="block text-base font-medium text-gray-700">
                 Emotional Intensity Level:
               </label>
-              <span className="text-sm text-gray-500">
-                1 is the lowest and 10 is the highest intensity level
-              </span>
             </div>
             <div className="flex items-center space-x-3">
               <button
                 onClick={() =>
-                  setEmotionIntensity(Math.max(0, emotionIntensity - 1))
+                  setEmotionIntensity(Math.max(1, emotionIntensity - 1))
                 }
-                className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={emotionIntensity <= 1}
+                className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
               >
                 -
               </button>
-              <span className="text-lg font-semibold text-gray-900 w-8 text-center">
-                {emotionIntensity}
-              </span>
+              <div className="flex text-center items-center">
+                <span className="text-lg font-semibold text-gray-900 w-16">
+                  {emotionIntensity === 3
+                    ? "High"
+                    : emotionIntensity === 2
+                    ? "Medium"
+                    : "Low"}
+                </span>
+              </div>
               <button
                 onClick={() =>
-                  setEmotionIntensity(Math.min(10, emotionIntensity + 1))
+                  setEmotionIntensity(Math.min(3, emotionIntensity + 1))
                 }
-                className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={emotionIntensity >= 3}
+                className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500"
               >
                 +
               </button>
