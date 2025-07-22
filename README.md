@@ -22,6 +22,9 @@ For the application to work, it must be run along with the backend API, which is
 
 # Application Demo
 
+![Upload Page](src/assets/upload.png)
+![Data storytelling](src/assets/agency.png)
+
 # References
 
 ​​[1] E. Segel and J. Heer, “Narrative Visualization: Telling Stories with Data”.
