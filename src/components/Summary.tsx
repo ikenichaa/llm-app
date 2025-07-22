@@ -73,7 +73,7 @@ const SummaryStep = ({
         <div className="relative w-full">
           {(visualizationImages ?? []).length > 0 && (
             <>
-              <div className="relative h-56 rounded-lg md:h-96">
+              <div className="relative h-60 xl:h-[50vh]">
                 {/* Dynamically render images based on current index */}
                 {visualizationImages.map((src, index) => (
                   <div
