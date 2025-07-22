@@ -9,7 +9,24 @@ interface Prop {
   emitClickGenerate?: (arg0: generatePayload) => void;
 }
 
-const purpose_list = ["Call to Action", "Provoke", "Explore", "Inform"];
+const purpose_list = [
+  {
+    id: "1",
+    name: "Inform",
+  },
+  {
+    id: "2",
+    name: "Provoke",
+  },
+  {
+    id: "3",
+    name: "Explore",
+  },
+  {
+    id: "4",
+    name: "Call to action",
+  },
+];
 const colorOptions = [
   ["#4A90E2", "#50E3C2", "#FF6B6B"],
   ["#4A4A4A", "#8B0000", "#FFD700"],
@@ -36,12 +53,6 @@ function WordCountSlider({
         onChange={onSliderChange}
         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
       />
-
-      {/* Displaying the current value of the slider */}
-      <div className="text-center mt-4">
-        <span className="text-lg font-semibold">{wordCount}</span>
-        <span className="text-sm text-gray-400"> words</span>
-      </div>
     </div>
   );
 }
@@ -221,15 +232,14 @@ const UserAgency = ({
           {/* Word Count Selection */}
           <div>
             <label className="block text-base font-medium text-gray-700 mb-2">
-              Approximate Word Count:
+              Approximate Word Count: {localWordCount} words
             </label>
             <div className="flex flex-wrap gap-2">
-              <div className="w-full mb-6">
+              <div className="w-full">
                 <WordCountSlider
                   wordCount={+localWordCount}
                   onSliderChange={handleSliderChange}
                 />
-                {/* <Slider /> */}
               </div>
             </div>
           </div>
@@ -241,17 +251,39 @@ const UserAgency = ({
             </label>
             <div className="flex flex-wrap gap-4">
               {purpose_list.map((p) => (
-                <label key={p} className="inline-flex items-center">
-                  <input
-                    type="radio"
-                    className="form-radio text-blue-600 rounded-full focus:ring-blue-500"
-                    name="purpose"
-                    value={p}
-                    checked={purpose === p}
-                    onChange={(e) => setPurpose(e.target.value)}
-                  />
-                  <span className="ml-2 text-sm text-gray-700">{p}</span>
-                </label>
+                // <label key={p} className="inline-flex items-center">
+                //   <input
+                //     type="radio"
+                //     className="form-radio text-blue-600 rounded-full focus:ring-blue-500"
+                //     name="purpose"
+                //     value={p}
+                //     checked={purpose === p}
+                //     onChange={(e) => setPurpose(e.target.value)}
+                //   />
+                //   <span className="ml-2 text-sm text-gray-700">{p}</span>
+                // </label>
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => {
+                    console.log(
+                      "[User Agency]: Setting selected emotion to",
+                      p.name
+                    );
+                    setPurpose(p.name);
+                  }}
+                  className={`
+                    px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200
+                    ${
+                      purpose === p.name
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "bg-gray-200 text-gray-800 hover:bg-blue-100 hover:text-blue-700" // Priority 3: Not selected but selectable
+                    }
+                  `}
+                  aria-pressed={purpose === p.name}
+                >
+                  {p.name}
+                </button>
               ))}
             </div>
           </div>

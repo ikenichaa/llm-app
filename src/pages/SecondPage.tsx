@@ -51,15 +51,16 @@ const SecondPage = ({
     setIsGeneratingSummary,
   } = useWebSocket();
 
-  const handleClickGenerate = (p: generatePayload) => {
+  const handleClickGenerate = async (p: generatePayload) => {
     console.log("[handleClickGenerate] Generating with payload...", p);
     setSummary("");
     setVisualizationImages([]);
     setIsGeneratingSummary(true);
 
-    // TODO: Uncomment this line
+    console.log("Before generate visualization---");
+    await generateVisualization();
+    console.log("After generate visualization---");
     generateSummary(p);
-    generateVisualization();
   };
 
   const generateSummary = (p: generatePayload) => {
@@ -99,7 +100,7 @@ const SecondPage = ({
         {/* Conditionally render the LoadingSpinner over this page */}
         {recommendedEmotion === "" && <LoadingModal />}
         {/* <!-- Left Column: Input Controls --> */}
-        <section className="self-start lg:w-2/5 p-6 bg-white rounded-lg shadow-xl flex flex-col gap-y-5">
+        <section className="self-start lg:w-2/5 p-6 bg-white rounded-lg shadow-xl flex flex-col gap-y-5 flex-grow">
           <UserAgency
             props={{
               emitClickGenerate: handleClickGenerate,
@@ -109,7 +110,7 @@ const SecondPage = ({
 
         {/* <!-- Right Column: Summary and Visualization --> */}
         <section
-          className={`lg:w-1/2 p-6 bg-white rounded-lg shadow-xl flex flex-col gap-y-6 relative`}
+          className={`lg:w-1/2 p-6 bg-white rounded-lg shadow-xl flex flex-col gap-y-6 relative flex-grow`}
         >
           {/* Overlay to make it unclickable and visually faded */}
           {/* Gray - generate=false, summary="" */}

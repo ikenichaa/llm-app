@@ -68,7 +68,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   // States that will be shared via context
   const [summary, setSummary] = useState<string>("");
   const [visualizationImages, setVisualizationImages] = useState<string[]>([]);
-  const [recommendedEmotion, setRecommendedEmotion] = useState<string>("joy");
+  const [recommendedEmotion, setRecommendedEmotion] = useState<string>("");
   const [recommendedEmotionReason, setRecommendedEmotionReason] =
     useState<string>("");
   const [inappropriateEmotion, setInappropriateEmotion] = useState<string[]>(
@@ -115,7 +115,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       try {
         const message = JSON.parse(event.data);
         switch (message["data"]["title"]) {
-          case "affective_narrative_v2":
+          case "affective_narrative":
             setSummary(message["data"]["result"]);
             break;
           case "recommended_emotion":
