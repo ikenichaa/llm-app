@@ -21,3 +21,11 @@ npm run serve
 For the application to work, it must be run along with the backend API, which is located in this repository [Data Story Backend](https://github.com/ikenichaa/data-story-backend)
 
 # Application Demo
+
+# References
+
+​​[1] E. Segel and J. Heer, “Narrative Visualization: Telling Stories with Data”.
+
+​[2] H. Shao, R. Martinez-Maldonado, V. Echeverria, L. Yan, and D. Gasevic, “Data Storytelling in Data Visualisation: Does it Enhance the Efficiency and Effectiveness of Information Retrieval and Insights Comprehension?,” Conference on Human Factors in Computing Systems - Proceedings, vol. 1, May 2024, doi: 10.1145/3613904.3643022.
+
+​[3] X. Lan, Y. Wu, and N. Cao, “Affective Visualization Design: Leveraging the Emotional Impact of Data”, Accessed: May 17, 2025. [Online]. Available: https://affectivevis.github.io/
