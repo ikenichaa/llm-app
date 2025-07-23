@@ -124,7 +124,7 @@ const UserAgency = ({
         console.log(`Debounced: Updating global context to ${localWordCount}`);
         setWordCount(localWordCount);
       }
-    }, 1000);
+    }, 100);
 
     return () => {
       clearTimeout(timer);
