@@ -52,6 +52,10 @@ const UploadStep = ({
   return (
     <>
       <div>
+        This system helps you transform your data into compelling narratives
+        that resonate emotionally with your audience:
+      </div>
+      <div>
         <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
           Upload File
         </h3>
@@ -67,7 +71,7 @@ const UploadStep = ({
         </h3>
         <textarea
           id="message"
-          className="block p-2.5 h-40 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="block p-2.5 h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Describe your dataset and specify what you want the story to focus on..."
           value={localDescription}
           onChange={handleDescriptionChange}
